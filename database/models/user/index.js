@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 //schema is the structure of our database
 
@@ -36,4 +36,5 @@ const UserSchema = new mongoose.Schema({
     });
 
 
-export const UserModel = mongoose.model("Users", UserSchema);
+const UserModel = mongoose.model("Users", UserSchema);
+module.exports = UserModel
