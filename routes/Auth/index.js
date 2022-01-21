@@ -1,4 +1,5 @@
 const express = require('express');
+const UserModel = require('../../database/models/user');
 // const passport = require('passport');
 
 const Router=express.Router();
@@ -21,25 +22,28 @@ method    post
 
 */
 
-// Router.post("/signup",async(req,res)=>{
-//     try{
-//       await ValidateSignup(req.body.credentials);
-      
-//         //check whether email or phone already exists
-//         await UserModel.findUserName(req.body.credentials);
+Router.post("/signup",async(req,res)=>{
+    try{
+      // await ValidateSignup(req.body.credentials);
+        const {email} = req.body.credentials;
+        //check whether email already exists
+        const ifAlreadyExists = await UserModel.findOne({email: email});
+        if(ifAlreadyExists){
+          return res.status(500).json({error: 'User with this email already exists'});
+        }
 
-//         //DB
-//         const newUser=await UserModel.create(req.body.credentials)
+        //DB
+        const newUser=await UserModel.create(req.body.credentials)
 
-//         //JWT AUth Token
-//         const token = newUser.generateJwtToken();
+        //JWT AUth Token
+        const token = newUser.generateJwtToken();
 
-//         return res.status(200).json({token, status: newUser.status, details: newUser});
+        return res.status(200).json({token, status: newUser.status, details: newUser});
 
-//     } catch(error){
-//         return res.status(500).json({error: error.message});
-//     }
-// })
+    } catch(error){
+        return res.status(500).json({error: error.message});
+    }
+})
 
 // /* 
 // Route     /signin
@@ -119,4 +123,3 @@ method    post
 // });
 
 module.exports = Router;
-// //google signup is not there 

@@ -3,8 +3,9 @@ const mongoose = require("mongoose");
 const mongoURL = "mongodb+srv://sudhirAgrawal:Sudhir@A22@volunteercluster.c28sw.mongodb.net/VolunteerStartup?retryWrites=true&w=majority";
 // const mongoURL = process.env.mongo_URL
 
-const connectToMongo = ()=>{
-    mongoose.connect(mongoURL, ()=>{
+const connectToMongo = async()=>{
+    mongoose.connect(mongoURL,  { useNewUrlParser: true},
+        () => {
         console.log('connection with mongoDb established');
     })
 }

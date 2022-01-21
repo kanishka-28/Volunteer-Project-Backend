@@ -1,4 +1,4 @@
-const db = require("./Database/connection");
+const db = require("./Database/connection/index");
 
 const express = require("express");
 const cors = require("cors")
@@ -13,7 +13,7 @@ app.get("/", (req,res)=>{
 })
 
 //api
-app.use("/api/auth", require("./routes/Auth/index"));
+app.use("/auth", require("./routes/auth/index"));
 // app.use("/api/notes", require("./Routes/notes"));
 
 const port = process.env.PORT || 4000;
