@@ -32,7 +32,7 @@ Router.post("/signup", async (req, res) => {
     const secPass = await bcrypt.hash(password, salt);
 
     //creating new user 
-    user = await UserModel.create({
+    const user = await UserModel.create({
       name: name,
       email: email,
       password: secPass,
@@ -74,6 +74,67 @@ Router.post("/signin", async (req, res) => {
       
       if (!user) {
         return res.status(400).json({ error: "enter correct credentials" })
+      }
+
+      const comparePassword = await bcrypt.compare(password, user.password);
+      if (!comparePassword) {
+        return res.status(400).json({ error: "enter correct credentials" })
+      }
+
+      // sending data 
+      const data = {
+        User: {
+          id: user.id,
+        }
+      }
+
+      const token = JWT.sign(data, JWT_SECRET, { expiresIn: "2d" });
+
+      return res.status(200).json({ token: token, status: user.status, details: user });
+
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+})
+
+/* 
+Route     /googlesignin
+descrip   signin with google
+params    none
+access    public
+method    post
+*/
+
+Router.post("/googlesignin", async (req, res) => {
+  try {
+      const {name, email, password, status } = req.body.credentials
+
+      const user = await UserModel.findOne({ email });
+      
+      if (!user) {
+            //creating new user 
+        const user = await UserModel.create({
+          name: name,
+          email: email,
+          password: secPass,
+          status: status,
+        });
+
+        // creating user data token 
+        const data = {
+          User: {
+            id: user.id
+          }
+        }
+
+        //generating salt
+        const salt = await bcrypt.genSalt(10);
+        const secPass = await bcrypt.hash(password, salt);
+
+        //JWT AUth Token
+        const token = JWT.sign(data, JWT_SECRET, { expiresIn: "2d" });
+
+        return res.status(200).json({ token: token, status: status, details: user });
       }
 
       const comparePassword = await bcrypt.compare(password, user.password);
