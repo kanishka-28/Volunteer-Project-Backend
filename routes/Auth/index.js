@@ -1,17 +1,12 @@
 const express = require('express');
 const UserModel = require('../../database/models/user');
 // const passport = require('passport');
-
-const Router=express.Router();
-
-//models
-// import {UserModel} from "../../database/user/index";
+const bcrypt = require('bcryptjs');
+const JWT = require('jsonwebtoken');
+const Router = express.Router();
 
 
-//validation
-
-// import { ValidateSignup,ValidateSignin } from "../../validation/auth";
-
+const JWT_SECRET = 'sudhir$%%Agrawal'
 
 /* 
 Route     /signup
@@ -19,107 +14,87 @@ descrip   signup with email and password
 params    none
 access    public
 method    post
-
 */
 
-Router.post("/signup",async(req,res)=>{
-    try{
-      // await ValidateSignup(req.body.credentials);
-        const {email} = req.body.credentials;
-        //check whether email already exists
-        const ifAlreadyExists = await UserModel.findOne({email: email});
-        if(ifAlreadyExists){
-          return res.status(500).json({error: 'User with this email already exists'});
-        }
+Router.post("/signup", async (req, res) => {
+  try {
+    // await ValidateSignup(req.body.credentials);
+    const { name, email, password, status, address, city } = req.body.credentials;
 
-        //DB
-        const newUser=await UserModel.create(req.body.credentials)
-
-        //JWT AUth Token
-        // const token = newUser.generateJwtToken();
-
-        return res.status(200).json({ status: newUser.status, details: newUser});
-
-    } catch(error){
-        return res.status(500).json({error: error.message});
+    //check whether email already exists
+    const ifAlreadyExists = await UserModel.findOne({ email: email });
+    if (ifAlreadyExists) {
+      return res.status(500).json({ error: 'User with this email already exists' });
     }
+
+    //generating salt
+    const salt = await bcrypt.genSalt(10);
+    const secPass = await bcrypt.hash(password, salt);
+
+    //creating new user 
+    user = await UserModel.create({
+      name: name,
+      email: email,
+      password: secPass,
+      status: status,
+      address: address,
+      city: city
+    });
+
+    // creating user data token 
+    const data = {
+      User: {
+        id: user.id
+      }
+    }
+
+    //JWT AUth Token
+    const token = JWT.sign(data, JWT_SECRET, { expiresIn: "2d" });
+
+    return res.status(200).json({ token: token, status: status, details: user });
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
 })
 
-// /* 
-// Route     /signin
-// descrip   signin with userName and password
-// params    none
-// access    public
-// method    post
+/* 
+Route     /signin
+descrip   signin with userName and password
+params    none
+access    public
+method    post
+*/
 
-// */
+Router.post("/signin", async (req, res) => {
+  try {
+      const { email, password } = req.body.credentials
 
-// Router.post("/signin",async(req,res)=>{
-//     try{
-//       const {userName, password} = req.body.credentials
-//         await ValidateSignin(req.body.credentials);
-//         // console.log(req.body.credentials);
-//         const user = await UserModel.findByUserNameAndPassword({userName, password});
-//         // console.log(req.body.credentials);
-//         //JWT AUth Token
-//         const token = user.generateJwtToken();
+      const user = await UserModel.findOne({ email });
+      
+      if (!user) {
+        return res.status(400).json({ error: "enter correct credentials" })
+      }
 
-//         return res.status(200).json({token, status:"Success", user: user.status, details: user});
+      const comparePassword = await bcrypt.compare(password, user.password);
+      if (!comparePassword) {
+        return res.status(400).json({ error: "enter correct credentials" })
+      }
 
-//     } catch(error){
-//         return res.status(500).json({error: error.message});
-//     }
-// })
+      // sending data 
+      const data = {
+        User: {
+          id: user.id,
+        }
+      }
 
-// Router.post("/googlesignin",async(req,res)=>{
-//     try{
-//       const {userName, password , email} = req.body.credentials
+      const token = JWT.sign(data, JWT_SECRET, { expiresIn: "2d" });
 
-//         const user = await UserModel.findOne({email})
-//         if(!user){
+      return res.status(200).json({ token: token, status: user.status, details: user });
 
-//           const newUser=await UserModel.create(req.body.credentials)
-//           const token = newUser.generateJwtToken();
-//           return res.status(200).json({token, status: newUser.status, details: newUser});
-//         }
-//         //JWT AUth Token
-//         const token = user.generateJwtToken();
-
-//         return res.status(200).json({token, status:"Success", user: user.status, details: user});
-
-//     } catch(error){
-//         return res.status(500).json({error: error.message});
-//     }
-// })
-// /* 
-// Route     /google
-// descrip   Google signin/signup 
-// params    none
-// access    public
-// method    GET
-// */
-
-// Router.get("/google",passport.authenticate("google",{
-//   scope:[
-//     "https://www.googleapis.com/auth/userinfo.profile",
-//     "https://www.googleapis.com/auth/userinfo.email"
-//   ],
-// }));
-
-// /* 
-// Route     /google/callback
-// descrip   Google signin/signup callback
-// params    none
-// access    public
-// method    GET
-
-// */
-
-// Router.get("/google/callback",passport.authenticate("google",{
-//   failureRedirect:"/"
-// } ),(req,res)=>{
-//   res.set('Access-Control-Allow-Origin', 'http://localhost:3000');  
-//    res.json({token: req.session.passport.user.token});
-// });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+})
 
 module.exports = Router;
