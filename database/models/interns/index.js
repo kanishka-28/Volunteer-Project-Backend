@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 //schema is the structure of our database
 
 const InternSchema = new mongoose.Schema({
+    company: {
+        type: mongoose.Types.ObjectId,
+        ref: "Company",
+        required: true
+    },
     name:
     {
         type: String,
@@ -18,10 +23,6 @@ const InternSchema = new mongoose.Schema({
     },
     skillsNeeded: 
     {   
-        type: String
-    },
-    companyName: 
-    {
         type: String
     },
     stipend: 
