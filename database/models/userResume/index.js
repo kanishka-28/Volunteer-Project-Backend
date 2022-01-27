@@ -7,15 +7,39 @@ const ResumeSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "Users"
     },
-    qualification: {
-        type: Array
-    },
+    qualification: [
+        {
+            name:{
+                type: String,
+                required: true
+            },
+            year:{
+                type: String,
+                required: true
+            },
+            extra:{
+                type: String,
+            },
+        }
+    ],
     skills: {
         type: Array
     },
-    experience: {
-        type: Array
-    }
+    experience: [
+        {
+            name:{
+                type: String,
+                required: true
+            },
+            year:{
+                type: String,
+                required: true
+            },
+            extra:{
+                type: String,
+            },
+        }
+    ],
 },
     {
         timestamps: true

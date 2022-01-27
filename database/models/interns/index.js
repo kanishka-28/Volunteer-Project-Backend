@@ -32,7 +32,11 @@ const InternSchema = new mongoose.Schema({
     location: 
     {
         type: String
-    }
+    },
+    user: 
+    {
+        type: Array
+    },
     });
 
 

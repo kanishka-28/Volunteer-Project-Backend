@@ -66,20 +66,7 @@ Router.post("/postintern/:id", async (req, res) => {
         return res.status(200).json({ newIntern });
       }
 
-      const comparePassword = await bcrypt.compare(password, user.password);
-      if (!comparePassword) {
-        return res.status(400).json({ error: "enter correct credentials" })
-      }
-
-      // sending data 
-      const data = {
-        User: {
-          id: user.id,
-        }
-      }
-
-      const token = JWT.sign(data, JWT_SECRET, { expiresIn: "2d" });
-
+      // put request for editing 
       return res.status(200).json({ token: token, status: user.status, details: user });
 
     } catch (error) {
