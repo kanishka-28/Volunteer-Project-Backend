@@ -13,27 +13,31 @@ const InternSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    category:
+    {
+        type: String,
+    },
     description:
     {
         type: String,
     },
     duration:
     {
-        type: Number,
+        type: String,
     },
     skillsNeeded: 
     {   
-        type: String
+        type: Array
     },
     stipend: 
     {
-        type: Number,
+        type: String,
     },
     location: 
     {
         type: String
     },
-    user: 
+    users: 
     {
         type: Array
     },

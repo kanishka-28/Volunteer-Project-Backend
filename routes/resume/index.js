@@ -23,7 +23,7 @@ Router.get("/getresume/:id", async (req, res) => {
             return res.status(500).json({ error: 'User does not exists' });
         }
 
-        return res.status(200).json({ details: user });
+        return res.status(200).json({ user });
 
     } catch (error) {
         return res.status(500).json({ error: error.message });

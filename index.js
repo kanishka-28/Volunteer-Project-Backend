@@ -16,6 +16,8 @@ app.get("/", (req,res)=>{
 app.use("/auth", require("./routes/auth/index"));
 app.use("/user", require("./routes/user/index"));
 app.use("/resume", require("./routes/resume/index"));
+app.use("/intern", require("./routes/intern/index"));
+app.use("/company", require("./routes/company/index"));
 
 const port = process.env.PORT || 4000;
 app.listen(port, ()=>{

@@ -13,7 +13,7 @@ Route     /getuser/:id
 descrip   getting user details with user id
 params    none
 access    public
-method    post
+method    get
 */
 
 Router.get("/getuser/:id", async (req, res) => {
@@ -32,17 +32,26 @@ Router.get("/getuser/:id", async (req, res) => {
 })
 
 /* 
-Route     /jobapply/:id/:companyId
+Route     /jobapply/:id/:internId
 descrip   posting job application
-params    user id, company id
+params    user id, intern id
 access    public
 method    post
 */
 
-Router.post("/jobapply/:id/:companyId", async (req, res) => {
+Router.post("/jobapply/:id/:internId", async (req, res) => {
   try {
-    const newJob = InternModel.create(req.body.credentials)
-    return res.status(200).json({ details: newJob });
+    const credentials = {
+      users: [req.params.id]
+    }
+    const intern = await InternModel.findOneAndUpdate({
+      _id: req.params.internId
+    }, {
+      $push: credentials
+    }, {
+      new: true
+    });
+    return res.status(200).json({ intern });
 
   } catch (error) {
     return res.status(500).json({ error: error.message });
