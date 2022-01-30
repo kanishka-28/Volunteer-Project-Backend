@@ -20,7 +20,8 @@ Router.get("/allinterns", async (req, res) => {
   try {
 
     const interns = await InternModel.find({});
-    return res.status(200).json({ interns });
+
+    return res.status(200).json(interns);
 
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -57,8 +58,26 @@ method    get
 
 Router.get("/getapplicants/:internID", async (req, res) => {
   try {
-    const interns = await InternModel.find({_id: req.params.internID});
-    return res.status(200).json( interns[0].users );
+    const interns = await InternModel.findById(req.params.internID);
+    let data=[];
+    // const userData= await UserModel.findById(interns.users[0])
+    // const userData = interns.users.map( async(user, i)=>{
+    //   const res = await UserModel.findById(user)
+    //     data.push(res)
+    //     return res
+    //   // data = UserModel.findById(user);
+    // })
+    for (let i = 0; i < interns.users.length; i++) {
+      Promise.resolve(UserModel.findById(interns.users[i])).then((res)=>{
+        // data=res
+        data[i]=res;
+        console.log(data);
+      })
+    }
+    setTimeout(() => {
+      console.log(data);
+      return res.status(200).json( data );
+    }, 500);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

@@ -13,7 +13,11 @@ const InternSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    category:
+    category:   //volunteer or intern
+    {
+        type: String,
+    },
+    jobType:   //volunteer/intern or full time
     {
         type: String,
     },
@@ -27,6 +31,10 @@ const InternSchema = new mongoose.Schema({
     },
     skillsNeeded: 
     {   
+        type: Array
+    },
+    qualificationNeeded:
+    {
         type: Array
     },
     stipend: 

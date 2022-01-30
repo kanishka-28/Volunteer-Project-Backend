@@ -22,6 +22,14 @@ const UserSchema = new mongoose.Schema({
     { 
         type: String
     },
+    skills: 
+    { 
+        type: Array
+    },
+    city: 
+    { 
+        type: String
+    },
     },
     {
         timestamps: true
