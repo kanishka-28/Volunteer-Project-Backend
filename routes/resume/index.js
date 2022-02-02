@@ -45,6 +45,7 @@ Router.post("/postresume/:id", async (req, res) => {
             const userResume = ResumeModel.create({ user: req.params.id, ...req.body.credentials });
             return res.status(200).json({ resume: userResume });
         }
+        console.log(req.body.credentials);
         const userResume = await ResumeModel.findOneAndUpdate({
             user: req.params.id
         }, {

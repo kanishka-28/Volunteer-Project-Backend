@@ -37,6 +37,10 @@ const InternSchema = new mongoose.Schema({
     {
         type: Array
     },
+    experienceNeeded:
+    {
+        type: Array
+    },
     stipend: 
     {
         type: String,
@@ -45,10 +49,28 @@ const InternSchema = new mongoose.Schema({
     {
         type: String
     },
-    users: 
+    position: 
     {
-        type: Array
+        type: String
     },
+    users: [
+        {
+            id:{
+                type: String,
+                required: true
+            },
+            title:{
+                type: String,
+                required: true
+            },
+            question:{
+                type: String
+            }
+        }
+    ]
+    },
+    {
+        timestamps: true
     });
 
 
