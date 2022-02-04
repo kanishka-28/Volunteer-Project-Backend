@@ -18,11 +18,11 @@ app.get("/", (req,res)=>{
 })
 
 //api
-app.use("/auth", require("./routes/auth/index"));
-app.use("/user", require("./routes/user/index"));
-app.use("/resume", require("./routes/resume/index"));
-app.use("/intern", require("./routes/intern/index"));
-app.use("/company", require("./routes/company/index"));
+app.use("/auth", auth);
+app.use("/user", user);
+app.use("/resume", resume);
+app.use("/intern", intern);
+app.use("/company", company);
 
 const port = process.env.PORT || 4000;
 app.listen(port, ()=>{
