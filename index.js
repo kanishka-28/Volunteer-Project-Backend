@@ -2,6 +2,11 @@ const db = require("./database/connection/index");
 
 const express = require("express");
 const cors = require("cors")
+const auth = require("./routes/auth/index")
+const user = require("./routes/user/index")
+const resume = require("./routes/resume/index")
+const intern = require("./routes/intern/index")
+const company = require("./routes/company/index")
 
 const app = express();
 app.use(express.json());
