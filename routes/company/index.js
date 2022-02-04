@@ -6,7 +6,7 @@ const CompanyModel = require('../../database/models/company');
 const InternModel = require('../../database/models/interns');
 const UserModel = require('../../database/models/user');
 const Router = express.Router();
-
+const jwt = require("jsonwebtoken")
 
 /* 
 Route     /getcompany/:id
@@ -39,9 +39,11 @@ access    public
 method    post
 */
 
-Router.post("/postjob/:companyId", async (req, res) => {
+Router.post("/postjob", async (req, res) => {
   try { 
-    const intern = await InternModel.create({company: req.params.companyId, ...req.body.credentials})
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    const intern = await InternModel.create({company: data.Company.id, ...req.body.credentials})
     return res.status(200).json({ intern });
 
   } catch (error) {
@@ -57,9 +59,11 @@ access    public
 method    get
 */
 
-Router.get("/getjobs/:companyId", async (req, res) => {
+Router.get("/getinterns", async (req, res) => {
   try { 
-    const intern = await InternModel.find({company: req.params.companyId})
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    const intern = await InternModel.find({company: data.Company.id})
     if(!intern){
       return res.status(500).json({ error: 'org has not posted any opportunity' });
     }

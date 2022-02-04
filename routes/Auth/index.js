@@ -211,4 +211,60 @@ Router.post("/googlesignin", async (req, res) => {
     }
 })
 
+
+/* 
+Route     /forgotpass
+descrip   forgotpass
+params    none
+access    public
+method    put
+*/
+
+Router.put("/forgotpass", async (req, res) => {
+  try {
+    // await ValidateSignup(req.body.credentials);
+    const { email, password, status } = req.body.credentials;
+    let ifAlreadyExists=null;
+
+    if(status===null){
+      return res.status(401).json({error: 'status not provided'})
+    }
+    if(status==='user'){
+      //check whether email already exists
+      ifAlreadyExists = await UserModel.findOne({email});
+      if (!ifAlreadyExists) {
+        return res.status(500).json({ error: `${status} with this email does not exists`});
+      }
+
+      //generating salt
+      const salt = await bcrypt.genSalt(10);
+      const secPass = await bcrypt.hash(password, salt);
+      const user = await UserModel.findOneAndUpdate({email},{
+        $set: {password: secPass}
+      })
+      return res.status(200).json(user);
+    }
+    else if(status==='company'){
+      //check whether email already exists
+      ifAlreadyExists = await CompanyModel.findOne({email});
+      if (!ifAlreadyExists) {
+        return res.status(500).json({ error: `${status} with this email does not exists`});
+      }
+      
+      //generating salt
+      const salt = await bcrypt.genSalt(10);
+      const secPass = await bcrypt.hash(password, salt);
+
+      const company = await CompanyModel.findOneAndUpdate({email},{
+        $set: {password: secPass}
+      })
+      return res.status(200).json(company);
+    }
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+
 module.exports = Router;

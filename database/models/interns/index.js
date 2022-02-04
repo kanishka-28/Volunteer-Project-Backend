@@ -59,7 +59,7 @@ const InternSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            title:{
+            resume:{
                 type: String,
                 required: true
             },
