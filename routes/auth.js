@@ -1,9 +1,9 @@
 const express = require('express');
-const UserModel = require('../../database/models/user');
+const UserModel = require('../database/models/user');
 // const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
-const CompanyModel = require('../../database/models/company');
+const CompanyModel = require('../database/models/company');
 const Router = express.Router();
 
 
