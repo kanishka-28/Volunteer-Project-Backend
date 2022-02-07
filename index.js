@@ -2,7 +2,7 @@ const db = require("./database/connection/index");
 
 const express = require("express");
 const cors = require("cors")
-const auth = require("./routes/auth.js")
+const auth = require("./routes/auth")
 const user = require("./routes/user")
 const resume = require("./routes/resume")
 const intern = require("./routes/intern")

@@ -31,11 +31,14 @@ const ResumeSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            year:{
+            position:{
                 type: String,
                 required: true
             },
-            extra:{
+            duration:{
+                type: String,
+            },
+            description:{
                 type: String,
             },
         }

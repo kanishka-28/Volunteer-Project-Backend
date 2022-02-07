@@ -107,7 +107,7 @@ method    post
 
 Router.post("/signin", async (req, res) => {
   try {
-      const { email, password, status } = req.body.credentials
+      const { email, password, status, aMonth } = req.body.credentials
       let user=[];
       if(status==='user'){
         user = await UserModel.findOne({ email });      
@@ -117,12 +117,12 @@ Router.post("/signin", async (req, res) => {
       }
       
       if (!user) {
-        return res.status(400).json({ error: "enter correct credentials" })
+        return res.status(400).json({ error: "Enter correct credentials" })
       }
 
       const comparePassword = await bcrypt.compare(password, user.password);
       if (!comparePassword) {
-        return res.status(400).json({ error: "enter correct credentials" })
+        return res.status(400).json({ error: "Password is incorrect" })
       }
       let data={};
       if(status==='user'){    
@@ -141,11 +141,13 @@ Router.post("/signin", async (req, res) => {
           }
         }     
       }
-
-      const token = JWT.sign(data, JWT_SECRET, { expiresIn: "2d" });
-
-      return res.status(200).json({ token: token, status: status, details: user });
-
+      if(aMonth){
+        const token = JWT.sign(data, JWT_SECRET, { expiresIn: "30d" });
+        return res.status(200).json({ token: token, status: status, details: user });
+      }else{
+        const token = JWT.sign(data, JWT_SECRET, { expiresIn: "2d" });
+        return res.status(200).json({ token: token, status: status, details: user });
+      }
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
