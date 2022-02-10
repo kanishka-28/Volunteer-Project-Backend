@@ -3,21 +3,25 @@ const mongoose = require('mongoose');
 //schema is the structure of our database
 
 const ResumeSchema = new mongoose.Schema({
+    ResumeTitle: {
+        type: String,
+        required: true
+    },
     user: {
         type: mongoose.Types.ObjectId,
         ref: "Users"
     },
     qualification: [
         {
-            name:{
+            name: {
                 type: String,
                 required: true
             },
-            year:{
+            year: {
                 type: String,
                 required: true
             },
-            extra:{
+            extra: {
                 type: String,
             },
         }
@@ -27,18 +31,18 @@ const ResumeSchema = new mongoose.Schema({
     },
     experience: [
         {
-            name:{
+            name: {
                 type: String,
                 required: true
             },
-            position:{
+            position: {
                 type: String,
                 required: true
             },
-            duration:{
+            duration: {
                 type: String,
             },
-            description:{
+            description: {
                 type: String,
             },
         }

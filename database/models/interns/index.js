@@ -29,11 +29,15 @@ const InternSchema = new mongoose.Schema({
     {
         type: String,
     },
-    skillsNeeded: 
-    {   
+    skillsNeeded:
+    {
         type: Array
     },
     qualificationNeeded:
+    {
+        type: Array
+    },
+    knowledgeNeeded:
     {
         type: Array
     },
@@ -41,34 +45,22 @@ const InternSchema = new mongoose.Schema({
     {
         type: Array
     },
-    stipend: 
+    stipend:
     {
         type: String,
     },
-    location: 
+    location:
     {
         type: String
     },
-    position: 
+    position:
     {
         type: String
     },
-    users: [
-        {
-            id:{
-                type: String,
-                required: true
-            },
-            resume:{
-                type: String,
-                required: true
-            },
-            question:{
-                type: String
-            }
-        }
-    ]
-    },
+    users: {
+        type: Array,
+    }
+},
     {
         timestamps: true
     });
