@@ -2,7 +2,7 @@ const express = require('express');
 const UserModel = require('../../database/models/user');
 // const passport = require('passport');
 const bcrypt = require('bcryptjs');
-const JWT = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const ResumeModel = require('../../database/models/userResume');
 const InternModel = require('../../database/models/interns');
 const Router = express.Router();
@@ -15,16 +15,16 @@ access    public
 method    post
 */
 
-Router.get("/getresume/:id", async (req, res) => {
+Router.get("/getresume", async (req, res) => {
     try {
-
-        const user = await ResumeModel.findOne({ user: req.params.id });
+        const token = req.header('token');
+        const data = jwt.verify(token, "sudhir$%%Agrawal");
+        const id = data.User.id;
+        const user = await ResumeModel.find({ user: id });
         if (!user) {
             return res.status(500).json({ error: 'User does not exists' });
         }
-
-        return res.status(200).json({ user });
-
+        return res.status(200).json(user);
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
@@ -38,22 +38,27 @@ access    public
 method    post
 */
 
-Router.post("/postresume/:id", async (req, res) => {
+Router.post("/postresume", async (req, res) => {
     try {
-        const user = await ResumeModel.findOne({ user: req.params.id });
-        if (!user) {
-            const userResume = ResumeModel.create({ user: req.params.id, ...req.body.credentials });
-            return res.status(200).json({ resume: userResume });
-        }
-        console.log(req.body.credentials);
-        const userResume = await ResumeModel.findOneAndUpdate({
-            user: req.params.id
-        }, {
-            $push: req.body.credentials
-        }, {
-            new: true
-        });
-        return res.status(200).json({ userResume });
+        const token = req.header('token');
+        const data = jwt.verify(token, "sudhir$%%Agrawal");
+        const id = data.User.id;
+        const { resumeTitle, name, email, phone, github, linkedin, facebook, college, fromYearClg, toYearClg, percentageClg, school, fromYearSchl, toYearSchl, percentageSchl, skill1, skill2, skill3, interest1, interest2, interest3, companyName, position, duration, description } = req.body.credentials;
+
+        const user = await ResumeModel.find({ user: id });
+        const resume = await ResumeModel.create({
+            user: id,
+            resumeTitle, name, email, phone, github, linkedin, facebook,
+            skills: [skill1, skill2, skill3],
+            interests: [interest1, interest2, interest3],
+            qualification: {
+                college, fromYearClg, toYearClg, percentageClg, school, fromYearSchl, toYearSchl, percentageSchl
+            },
+            experience: {
+                companyName, position, duration, description
+            }
+        })
+        return res.status(200).json({ resume });
 
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -61,18 +66,45 @@ Router.post("/postresume/:id", async (req, res) => {
 })
 
 /* 
-Route     /updateresume/:id
+Route     /updateresume
 descrip   updating info from user resume with user id
 params    user id
 access    public
 method    put
 */
 
+Router.put("/editresume", async (req, res) => {
+    try {
+        const token = req.header('token');
+        const data = jwt.verify(token, "sudhir$%%Agrawal");
+        const id = data.User.id;
+        const { resumeTitle, name, email, phone, github, linkedin, facebook, college, fromYearClg, toYearClg, percentageClg, school, fromYearSchl, toYearSchl, percentageSchl, skill1, skill2, skill3, interest1, interest2, interest3, companyName, position, duration, description } = req.body;
 
+        let resume = await ResumeModel.findOne({ user: id, resumeTitle: resumeTitle });
+        console.log(req.body, resume);
+        const credentials = {
+            resumeTitle, name, email, phone, github, linkedin, facebook,
+            skills: [skill1, skill2, skill3],
+            interests: [interest1, interest2, interest3],
+            qualification: {
+                college, fromYearClg, toYearClg, percentageClg, school, fromYearSchl, toYearSchl, percentageSchl
+            },
+            experience: {
+                companyName, position, duration, description
+            }
+        }
+        resume = await ResumeModel.findOneAndUpdate({ resumeTitle: resumeTitle },
+            {
+                $set: credentials
+            }, {
+            new: true
+        });
+        return res.status(200).json(resume);
 
-
-
-
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+})
 
 
 /* 
@@ -90,7 +122,7 @@ Router.delete("/deleteresume/:id", async (req, res) => {
             return res.status(500).json({ error: 'user resume does not exists' });
         }
         const userResume = await ResumeModel.findOneAndDelete({
-            user: req.params.id            
+            user: req.params.id
         });
         return res.status(200).json({ userResume });
 

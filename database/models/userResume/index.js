@@ -3,9 +3,29 @@ const mongoose = require('mongoose');
 //schema is the structure of our database
 
 const ResumeSchema = new mongoose.Schema({
-    ResumeTitle: {
+    resumeTitle: {
         type: String,
         required: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+    },
+    github: {
+        type: String,
+    },
+    linkedin: {
+        type: String,
+    },
+    facebook: {
+        type: String,
     },
     user: {
         type: mongoose.Types.ObjectId,
@@ -13,36 +33,57 @@ const ResumeSchema = new mongoose.Schema({
     },
     qualification: [
         {
-            name: {
-                type: String,
-                required: true
-            },
-            year: {
-                type: String,
-                required: true
-            },
-            extra: {
+            college: {
                 type: String,
             },
+            fromYearClg: {
+                type: String,
+            },
+            toYearClg: {
+                type: String,
+            },
+            percentageClg: {
+                type: String,
+            },
+            school: {
+                type: String,
+            },
+            fromYearSchl: {
+                type: String,
+            },
+            toYearSchl: {
+                type: String,
+            },
+            percentageSchl: {
+                type: String,
+            },
+        }
+    ],
+    projects:[
+        {
+            title:{type: String},
+            link: {type: String},
+            projectDescription:{type: String},
         }
     ],
     skills: {
         type: Array
     },
+    interests: {
+        type: Array
+    },
     experience: [
         {
-            name: {
+            companyName: {
                 type: String,
-                required: true
             },
             position: {
                 type: String,
-                required: true
             },
             duration: {
                 type: String,
             },
-            description: {
+            experienceDescription: {
                 type: String,
             },
         }

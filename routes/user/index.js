@@ -8,7 +8,7 @@ const Router = express.Router();
 const jwt = require("jsonwebtoken");
 
 /* 
-Route     /getuser/:id
+Route     /getuser
 descrip   getting user details with user id
 params    none
 access    public
@@ -32,8 +32,34 @@ Router.get("/getuser", async (req, res) => {
 })
 
 /* 
+Route     /edituser
+descrip   editing user details with user id
+params    none
+access    public
+method    put
+*/
+
+Router.put("/edituser", async (req, res) => {
+  try {
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    let user = await UserModel.findById(data.User.id);
+    if (!user) {
+      return res.status(500).json({ error: 'User does not exists' });
+    }
+    user = await UserModel.findByIdAndUpdate(data.User.id, {
+      $set: req.body.credentials
+    })
+    return res.status(200).json( user );
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+/* 
 Route     /jobapply/:internId
-descrip   posting job application
+descrip   applying for job
 params    user id, intern id
 access    public
 method    post
@@ -55,11 +81,10 @@ Router.post("/jobapply/:internId", async (req, res) => {
       return res.status(400).send("You have already applied for this.")
     }
     //finding resume id
-    // let resume = await ResumeModel.find({user: data.User.id});
-    // resume = resume.map((data)=>{
-    //   return data.resumeTitle==req.body.credentials.resume
-    // })
-
+    let resume = await ResumeModel.find({user: data.User.id});
+    resume = resume.filter((data)=>{
+      return data.resumeTitle==req.body.credentials.resume
+    })
     //pushing intern in intern model
     intern = await InternModel.findOneAndUpdate({
       _id: req.params.internId
@@ -76,12 +101,13 @@ Router.post("/jobapply/:internId", async (req, res) => {
       $push: {internsApplied: [{ 
         id: req.params.internId, 
         date: new Date(),
-        // resume: resume._id,
+        resume: resume[0]._id.toString(),
         question: req.body.credentials.question
       }]} 
     }, {
       new: true
     });
+    console.log(user);
     return res.status(200).send("You have successfully applied for the opportunity");
 
   } catch (error) {
