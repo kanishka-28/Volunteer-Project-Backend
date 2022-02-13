@@ -17,6 +17,10 @@ const UserSchema = new mongoose.Schema({
     {
         type: String,
     },
+    rating:
+    {
+        type: String,
+    },
     password:
     {
         type: String,
@@ -61,6 +65,9 @@ const UserSchema = new mongoose.Schema({
             },
         }
     ],
+    currentProjects: {
+        type: Array
+    },
     },
     {
         timestamps: true

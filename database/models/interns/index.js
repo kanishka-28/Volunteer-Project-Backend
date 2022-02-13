@@ -57,9 +57,12 @@ const InternSchema = new mongoose.Schema({
     {
         type: String
     },
-    users: {
+    usersApplied: {
         type: Array,
-    }
+    },
+    usersAccepted: {
+        type: Array,
+    },
 },
     {
         timestamps: true

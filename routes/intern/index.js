@@ -115,11 +115,11 @@ method    post
 Router.put("/rejectapplicant/:internID", async (req, res) => {
   try {
     let interns = await InternModel.findById(req.params.internID);
-    const newArray = interns.users.filter((user, i) => {
+    const newArray = interns.usersApplied.filter((user, i) => {
       return user !== req.body.credentials
     });
     const credentials = {
-      users: newArray
+      usersApplied: newArray
     }
     interns = await InternModel.findByIdAndUpdate(
       req.params.internID,
@@ -129,6 +129,45 @@ Router.put("/rejectapplicant/:internID", async (req, res) => {
       new: true
     });
     return res.status(200).json(interns);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+/* 
+Route     /acceptapplicant
+descrip   accept an applicant for the intern
+params    intern id
+access    public
+method    post
+*/
+
+Router.post("/acceptapplicant/:internID", async (req, res) => {
+  try {
+    let interns = await InternModel.findById(req.params.internID);
+    const newArray = interns.usersApplied?.filter((user, i) => {
+      return user === req.body.credentials
+    });
+    interns = await InternModel.findByIdAndUpdate(
+      req.params.internID,
+      {
+        $push: {
+          usersAccepted: newArray
+        }
+      }, {
+      new: true
+    });
+    const user = await UserModel.findByIdAndUpdate(
+      req.body.credentials,
+      {
+        $push: {
+          currentProjects: [req.params.internID]
+        }
+      }, {
+      new: true
+    });
+
+    return res.status(200).json({interns, user});
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

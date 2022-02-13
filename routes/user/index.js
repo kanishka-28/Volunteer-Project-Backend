@@ -72,7 +72,7 @@ Router.post("/jobapply/:internId", async (req, res) => {
     
     let intern = await InternModel.findById(req.params.internId)
     let ifAlreadyExists = false;
-    intern.users?.map((user)=>{
+    intern.usersApplied?.map((user)=>{
       if(user===data.User.id){
         ifAlreadyExists=true;
       }
@@ -85,11 +85,12 @@ Router.post("/jobapply/:internId", async (req, res) => {
     resume = resume.filter((data)=>{
       return data.resumeTitle==req.body.credentials.resume
     })
-    //pushing intern in intern model
+
+    // //pushing intern in intern model
     intern = await InternModel.findOneAndUpdate({
       _id: req.params.internId
     }, {
-      $push: {users: [data.User.id]}
+      $push: {usersApplied: [data.User.id]}
     }, {
       new: true
     });
@@ -107,11 +108,10 @@ Router.post("/jobapply/:internId", async (req, res) => {
     }, {
       new: true
     });
-    console.log(user);
     return res.status(200).send("You have successfully applied for the opportunity");
 
   } catch (error) {
-    return res.status(500).send("Some error occured while applying for the intern");
+    return res.status(500).json({error: error.message} || "Some error occured while applying for the intern");
   }
 });
 
@@ -123,7 +123,7 @@ access    public
 method    get
 */
 
-Router.get("/getmyjobs", async (req, res) => {
+Router.get("/getappliedjobs", async (req, res) => {
   try {
     const token = req.header('token');
     const data = jwt.verify(token, "sudhir$%%Agrawal");
@@ -137,6 +137,32 @@ Router.get("/getmyjobs", async (req, res) => {
     })    
   } catch (error) {
     return res.status(500).send("Some error occured while fetching your interns");
+  }
+});
+
+/* 
+Route     /getprojects/:userId
+descrip   getting my jobs
+params    user id
+access    public
+method    get
+*/
+
+Router.get("/getprojects", async (req, res) => {
+  try {
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    const user = await UserModel.findById(data.User.id);
+    const projects=user.currentProjects
+
+    Promise.all(projects.map(async (project) => {
+      const res = await InternModel.findById(project);
+      return res;
+    })).then((response) => {
+      return res.status(200).json(response);
+    })    
+  } catch (error) {
+    return res.status(500).send(error || "Some error occured while fetching your projects");
   }
 });
 
