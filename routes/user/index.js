@@ -73,12 +73,13 @@ Router.post("/jobapply/:internId", async (req, res) => {
     let intern = await InternModel.findById(req.params.internId)
     let ifAlreadyExists = false;
     intern.usersApplied?.map((user)=>{
+      
       if(user===data.User.id){
         ifAlreadyExists=true;
       }
     })
     if(ifAlreadyExists){
-      return res.status(400).send("You have already applied for this.")
+      return res.status(400).json({error: "You have already applied for this."})
     }
     //finding resume id
     let resume = await ResumeModel.find({user: data.User.id});
@@ -111,7 +112,7 @@ Router.post("/jobapply/:internId", async (req, res) => {
     return res.status(200).send("You have successfully applied for the opportunity");
 
   } catch (error) {
-    return res.status(500).json({error: error.message} || "Some error occured while applying for the intern");
+    return res.status(500).json({error: "Some error occured while applying for the intern"});
   }
 });
 
@@ -140,6 +141,99 @@ Router.get("/getappliedjobs", async (req, res) => {
   }
 });
 
+/* 
+Route     /acceptoffer/:userId
+descrip   getting my offers
+params    user id
+access    public
+method    get
+*/
+
+Router.put("/acceptoffer", async (req, res) => {
+  try {
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    let user = await UserModel.findById(data.User.id)
+    let applied = user.internsApplied.filter((intern)=>{
+      return intern._id.toString()!==req.body.credentials;
+    })
+    const offers = user.offers.filter((offer)=>{
+      return offer!==req.body.credentials
+    })
+    user = await UserModel.findOneAndUpdate({
+      _id: data.User.id
+    }, {
+      $push: {currentProjects: [req.body.credentials]} ,
+      $set: {offers: offers},
+      $set: {internsApplied: applied},
+    }, {
+      new: true
+    });   
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(500).send(error.message || "Some error occured while fetching your offers");
+  }
+});
+
+/* 
+Route     /rejectoffer/:userId
+descrip   getting my offers
+params    user id
+access    public
+method    get
+*/
+
+Router.put("/acceptoffer", async (req, res) => {
+  try {
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    let user = await UserModel.findById(data.User.id)
+    let applied = user.internsApplied.filter((intern)=>{
+      return intern._id.toString()!==req.body.credentials;
+    })
+    const offers = user.offers.filter((offer)=>{
+      return offer!==req.body.credentials
+    })
+    user = await UserModel.findOneAndUpdate({
+      _id: data.User.id
+    }, {
+      $push: {currentProjects: [req.body.credentials]} ,
+      $set: {offers: offers},
+      $set: {internsApplied: applied},
+    }, {
+      new: true
+    });   
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(500).send(error.message || "Some error occured while fetching your offers");
+  }
+});
+
+/* 
+Route     /getoffers/:userId
+descrip   getting my offers
+params    user id
+access    public
+method    get
+*/
+
+Router.get("/getoffers", async (req, res) => {
+  try {
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    const user = await UserModel.findById(data.User.id);
+    const offers=user.offers
+
+    Promise.all(offers.map(async (offer) => {
+      const res = await InternModel.findById(offer);
+      return res;
+    })).then((response) => {
+      return res.status(200).json(response);
+    })    
+  } catch (error) {
+    return res.status(500).send(error.message || "Some error occured while fetching your offers");
+  }
+});
 /* 
 Route     /getprojects/:userId
 descrip   getting my jobs

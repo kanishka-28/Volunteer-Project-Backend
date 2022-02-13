@@ -161,7 +161,7 @@ Router.post("/acceptapplicant/:internID", async (req, res) => {
       req.body.credentials,
       {
         $push: {
-          currentProjects: [req.params.internID]
+          offers: [req.params.internID]
         }
       }, {
       new: true

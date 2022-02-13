@@ -42,10 +42,6 @@ const UserSchema = new mongoose.Schema({
     { 
         type: String
     },
-    // internsApplied: 
-    // { 
-    //     type: Array
-    // },
     internsApplied: [
         {
             id:{
@@ -66,6 +62,9 @@ const UserSchema = new mongoose.Schema({
         }
     ],
     currentProjects: {
+        type: Array
+    },
+    offers: {
         type: Array
     },
     },
