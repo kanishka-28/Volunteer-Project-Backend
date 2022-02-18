@@ -41,8 +41,7 @@ Router.get("/getintern/:id", async (req, res) => {
   try {
 
     const intern = await InternModel.findById(req.params.id);
-    const company = await CompanyModel.findById(intern.company)
-    return res.status(200).json({ intern: intern, company: company });
+    return res.status(200).json(intern);
 
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -232,18 +231,18 @@ Router.get("/useronboarded/:id", async (req, res) => {
 // method    post
 // */
 
-Router.post("/postintern", async (req, res) => {
-  try {
+// Router.post("/postintern", async (req, res) => {
+//   try {
     
-    const token = req.header('token');
-    const data = jwt.verify(token, "sudhir$%%Agrawal");
-    const newIntern = await InternModel.create({companyId: data.Company.id,...req.body.credentials});
-    return res.status(200).json({ newIntern });
+//     const token = req.header('token');
+//     const data = jwt.verify(token, "sudhir$%%Agrawal");
+//     const newIntern = await InternModel.create({companyId: data.Company.id,...req.body.credentials});
+//     return res.status(200).json({ newIntern });
     
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-})
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// })
 
 
 module.exports = Router;
