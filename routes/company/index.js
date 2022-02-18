@@ -16,11 +16,12 @@ access    public
 method    get
 */
 
-Router.get("/getcompany/:id", async (req, res) => {
+Router.get("/getcompany", async (req, res) => {
   try {
 
-    // console.log(req.params.id);
-    const company = await CompanyModel.findById(req.params.id);
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    const company = await CompanyModel.findById(data.Company.id);
     if (!company) {
       return res.status(500).json({ error: 'Organization does not exists' });
     }
