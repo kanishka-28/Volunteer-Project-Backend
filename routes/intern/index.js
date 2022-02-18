@@ -222,7 +222,6 @@ Router.get("/useronboarded/:id", async (req, res) => {
   }
 })
 
-module.exports = Router;
 
 
 // /*
@@ -235,13 +234,16 @@ module.exports = Router;
 
 Router.post("/postintern", async (req, res) => {
   try {
-
+    
     const token = req.header('token');
     const data = jwt.verify(token, "sudhir$%%Agrawal");
-    const newIntern = await InternModel.create({companyId: data.companyId,...req.body.credentials});
+    const newIntern = await InternModel.create({companyId: data.company.id,...req.body.credentials});
     return res.status(200).json({ newIntern });
-
+    
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 })
+
+
+module.exports = Router;
