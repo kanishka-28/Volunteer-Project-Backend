@@ -43,7 +43,7 @@ Router.post("/postjob", async (req, res) => {
   try { 
     const token = req.header('token');
     const data = jwt.verify(token, "sudhir$%%Agrawal");
-    const intern = await InternModel.create({company: data.Company.id, ...req.body.credentials})
+    const intern = await InternModel.create({companyId: data.Company.id, ...req.body.credentials})
     return res.status(200).json({ intern });
 
   } catch (error) {
