@@ -2,7 +2,7 @@ const express = require('express');
 const UserModel = require('../../database/models/user');
 // const passport = require('passport');
 const bcrypt = require('bcryptjs');
-const JWT = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const InternModel = require('../../database/models/interns');
 const CompanyModel = require('../../database/models/company');
 const Router = express.Router();
@@ -93,8 +93,9 @@ method    get
 Router.get("/getapplicants/:internID", async (req, res) => {
   try {
     const interns = await InternModel.findById(req.params.internID);
-    Promise.all(interns.users.map(async (user, i) => {
-      const res = await UserModel.findById(user.id);
+    console.log(interns);
+    Promise.all(interns.usersApplied.map(async (user, i) => {
+      const res = await UserModel.findById(user);
       return res;
     })).then((response) => {
       return res.status(200).json(response);
@@ -142,26 +143,40 @@ access    public
 method    post
 */
 
-Router.post("/acceptapplicant/:internID", async (req, res) => {
+Router.put("/acceptapplicant/:internID", async (req, res) => {
   try {
+    console.log(req.params.internID);
     let interns = await InternModel.findById(req.params.internID);
-    const newArray = interns.usersApplied?.filter((user, i) => {
+    const userAccepted = interns.usersApplied?.filter((user, i) => {
       return user === req.body.credentials
+    });
+    const userApplied = interns.usersApplied?.filter((user, i) => {
+      return user !== req.body.credentials
     });
     interns = await InternModel.findByIdAndUpdate(
       req.params.internID,
       {
         $push: {
-          usersAccepted: newArray
+          usersAccepted: userAccepted
+        },
+        $set:{
+          usersApplied: userApplied
         }
       }, {
       new: true
     });
-    const user = await UserModel.findByIdAndUpdate(
+    let user = await UserModel.findById(req.body.credentials)
+    const internApplied = user.internsApplied.filter((data)=>{
+      return data.id!==req.body.credentials
+    })
+    user = await UserModel.findByIdAndUpdate(
       req.body.credentials,
       {
         $push: {
           offers: [req.params.internID]
+        },
+        $set: {
+          internsApplied: internApplied
         }
       }, {
       new: true
@@ -174,6 +189,39 @@ Router.post("/acceptapplicant/:internID", async (req, res) => {
 });
 
 
+Router.get("/userapplied/:id", async (req, res) => {
+  try {
+
+    const intern = await InternModel.findById(req.params.id);
+    return res.status(200).json(intern.userApplied);
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+Router.get("/useraccepted/:id", async (req, res) => {
+  try {
+
+    const intern = await InternModel.findById(req.params.id);
+    return res.status(200).json(intern.userAccepted);
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+Router.get("/useronboarded/:id", async (req, res) => {
+  try {
+
+    const intern = await InternModel.findById(req.params.id);
+    return res.status(200).json(intern.userOnBoarded);
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
 module.exports = Router;
 
 
@@ -185,27 +233,29 @@ module.exports = Router;
 // method    post
 // */
 
-// Router.post("/postintern/:id", async (req, res) => {
-//   try {
+Router.post("/postintern", async (req, res) => {
+  try {
 
-//     const company = await InternModel.findOne({ company: req.params.id });
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    const company = await InternModel.findOne({ company: data.Company.id });
 
-//     if (!company) {
-//       const newIntern = await InternModel.create(req.body.credentials);
-//       return res.status(200).json({ newIntern });
-//     }
+    if (!company) {
+      const newIntern = await InternModel.create(req.body.credentials);
+      return res.status(200).json({ newIntern });
+    }
 
-//     // put request for editing
-//     const intern = await InternModel.findOneAndUpdate({
-//       company: req.params.id
-//     }, {
-//       $push: req.body.credentials
-//     }, {
-//       new: true
-//     });
-//     return res.status(200).json({ intern });
+    // put request for editing
+    const intern = await InternModel.findOneAndUpdate({
+      company: req.params.id
+    }, {
+      $push: req.body.credentials
+    }, {
+      new: true
+    });
+    return res.status(200).json({ intern });
 
-//   } catch (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
 // })

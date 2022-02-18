@@ -52,6 +52,27 @@ Router.post("/postjob", async (req, res) => {
 });
 
 /* 
+Route     /editjob/:companyId
+descrip   editing job application
+params    intern id
+access    public
+method    post
+*/
+
+Router.put("/editjob/:internId", async (req, res) => {
+  try { 
+    const intern = await InternModel.findByIdAndUpdate(req.params.internId,
+      {
+        $set: req.body.credentials
+      })
+    return res.status(200).json({ intern });
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+/* 
 Route     /getjobs/:companyId
 descrip   posting job application
 params    company id

@@ -73,7 +73,6 @@ Router.post("/jobapply/:internId", async (req, res) => {
     let intern = await InternModel.findById(req.params.internId)
     let ifAlreadyExists = false;
     intern.usersApplied?.map((user)=>{
-      
       if(user===data.User.id){
         ifAlreadyExists=true;
       }
@@ -86,8 +85,10 @@ Router.post("/jobapply/:internId", async (req, res) => {
     resume = resume.filter((data)=>{
       return data.resumeTitle==req.body.credentials.resume
     })
-
-    // //pushing intern in intern model
+    if(resume.length===0){
+      return res.status(500).json({error: "resume not selected"});
+    }
+    // pushing intern in intern model
     intern = await InternModel.findOneAndUpdate({
       _id: req.params.internId
     }, {
@@ -95,11 +96,9 @@ Router.post("/jobapply/:internId", async (req, res) => {
     }, {
       new: true
     });
-
     const user = await UserModel.findOneAndUpdate({
       _id: data.User.id
     }, {
-      // $push: {internsApplied: [req.params.internId]} 
       $push: {internsApplied: [{ 
         id: req.params.internId, 
         date: new Date(),
@@ -112,7 +111,7 @@ Router.post("/jobapply/:internId", async (req, res) => {
     return res.status(200).send("You have successfully applied for the opportunity");
 
   } catch (error) {
-    return res.status(500).json({error: "Some error occured while applying for the intern"});
+    return res.status(500).json({error: error.message} || {error: "Some error occured while applying for the intern"});
   }
 });
 
@@ -183,7 +182,7 @@ access    public
 method    get
 */
 
-Router.put("/acceptoffer", async (req, res) => {
+Router.put("/rejectoffer", async (req, res) => {
   try {
     const token = req.header('token');
     const data = jwt.verify(token, "sudhir$%%Agrawal");

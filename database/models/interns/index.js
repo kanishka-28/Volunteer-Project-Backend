@@ -3,12 +3,20 @@ const mongoose = require('mongoose');
 //schema is the structure of our database
 
 const InternSchema = new mongoose.Schema({
-    company: {
-        type: mongoose.Types.ObjectId,
-        ref: "Company",
-        required: true
-    },
-    name:
+    company: [
+        {
+            companyId:{
+                type: mongoose.Types.ObjectId,
+                ref: "Company",
+                required: true
+            },
+            companyName: {
+                type: String,
+                required: true,
+            }
+        }
+    ],
+    title:
     {
         type: String,
         required: true,
@@ -17,7 +25,7 @@ const InternSchema = new mongoose.Schema({
     {
         type: String,
     },
-    jobType:   //volunteer/intern or full time
+    type:   //volunteer/intern or full time
     {
         type: String,
     },
@@ -29,11 +37,11 @@ const InternSchema = new mongoose.Schema({
     {
         type: String,
     },
-    skillsNeeded:
+    skills:
     {
         type: Array
     },
-    qualificationNeeded:
+    qualification:
     {
         type: Array
     },
@@ -41,7 +49,7 @@ const InternSchema = new mongoose.Schema({
     {
         type: Array
     },
-    experienceNeeded:
+    experience:
     {
         type: Array
     },
