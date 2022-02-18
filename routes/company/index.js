@@ -84,7 +84,7 @@ Router.get("/getinterns", async (req, res) => {
   try { 
     const token = req.header('token');
     const data = jwt.verify(token, "sudhir$%%Agrawal");
-    const intern = await InternModel.find({company: data.Company.id})
+    const intern = await InternModel.find({companyId: data.Company.id})
     if(!intern){
       return res.status(500).json({ error: 'org has not posted any opportunity' });
     }

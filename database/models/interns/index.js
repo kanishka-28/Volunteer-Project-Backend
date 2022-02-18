@@ -3,19 +3,15 @@ const mongoose = require('mongoose');
 //schema is the structure of our database
 
 const InternSchema = new mongoose.Schema({
-    company: [
-        {
-            companyId:{
-                type: mongoose.Types.ObjectId,
-                ref: "Company",
-                required: true
-            },
-            companyName: {
-                type: String,
-                required: true,
-            }
-        }
-    ],
+    companyId: {
+        type: mongoose.Types.ObjectId,
+        ref: "Company",
+        required: true
+    },
+    companyName: {
+        type: String,
+        required: true,
+    },
     title:
     {
         type: String,

@@ -42,7 +42,7 @@ Router.get("/getintern/:id", async (req, res) => {
 
     const intern = await InternModel.findById(req.params.id);
     const company = await CompanyModel.findById(intern.company)
-    return res.status(200).json({intern: intern, company: company});
+    return res.status(200).json({ intern: intern, company: company });
 
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -159,15 +159,15 @@ Router.put("/acceptapplicant/:internID", async (req, res) => {
         $push: {
           usersAccepted: userAccepted
         },
-        $set:{
+        $set: {
           usersApplied: userApplied
         }
       }, {
       new: true
     });
     let user = await UserModel.findById(req.body.credentials)
-    const internApplied = user.internsApplied.filter((data)=>{
-      return data.id!==req.body.credentials
+    const internApplied = user.internsApplied.filter((data) => {
+      return data.id !== req.body.credentials
     })
     user = await UserModel.findByIdAndUpdate(
       req.body.credentials,
@@ -182,7 +182,7 @@ Router.put("/acceptapplicant/:internID", async (req, res) => {
       new: true
     });
 
-    return res.status(200).json({interns, user});
+    return res.status(200).json({ interns, user });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -238,22 +238,8 @@ Router.post("/postintern", async (req, res) => {
 
     const token = req.header('token');
     const data = jwt.verify(token, "sudhir$%%Agrawal");
-    const company = await InternModel.findOne({ company: data.Company.id });
-
-    if (!company) {
-      const newIntern = await InternModel.create(req.body.credentials);
-      return res.status(200).json({ newIntern });
-    }
-
-    // put request for editing
-    const intern = await InternModel.findOneAndUpdate({
-      company: req.params.id
-    }, {
-      $push: req.body.credentials
-    }, {
-      new: true
-    });
-    return res.status(200).json({ intern });
+    const newIntern = await InternModel.create({companyId: data.companyId,...req.body.credentials});
+    return res.status(200).json({ newIntern });
 
   } catch (error) {
     return res.status(500).json({ error: error.message });
