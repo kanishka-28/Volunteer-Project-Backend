@@ -8,7 +8,7 @@ const InternSchema = new mongoose.Schema({
         ref: "Company",
         required: true
     },
-    companyName: {
+    company: {
         type: String,
         required: true,
     },
@@ -41,7 +41,7 @@ const InternSchema = new mongoose.Schema({
     {
         type: Array
     },
-    knowledgeNeeded:
+    knowledge:
     {
         type: Array
     },
@@ -58,6 +58,10 @@ const InternSchema = new mongoose.Schema({
         type: String
     },
     position:
+    {
+        type: String
+    },
+    perks:
     {
         type: String
     },
