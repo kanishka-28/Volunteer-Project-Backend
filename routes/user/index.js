@@ -8,6 +8,27 @@ const Router = express.Router();
 const jwt = require("jsonwebtoken");
 
 /* 
+Route     /allusers
+descrip   getting user details with user id
+params    none
+access    public
+method    get
+*/
+
+Router.get("/allusers", async (req, res) => {
+  try {
+    const user = await UserModel.find({});
+    if (!user) {
+      return res.status(400).json({ error: 'No User' });
+    }
+    return res.status(200).json( user );
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+/* 
 Route     /getuser
 descrip   getting user details with user id
 params    none

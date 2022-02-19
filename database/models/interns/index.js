@@ -33,21 +33,9 @@ const InternSchema = new mongoose.Schema({
     {
         type: String,
     },
-    skills:
-    {
-        type: Array
-    },
-    qualification:
-    {
-        type: Array
-    },
-    knowledge:
-    {
-        type: Array
-    },
     experience:
     {
-        type: Array
+        type: String
     },
     stipend:
     {
@@ -61,9 +49,21 @@ const InternSchema = new mongoose.Schema({
     {
         type: String
     },
+    skills:
+    {
+        type: Array
+    },
+    qualification:
+    {
+        type: Array
+    },
+    knowledge:
+    {
+        type: Array
+    },
     perks:
     {
-        type: String
+        type: Array
     },
     usersApplied: {
         type: Array,
