@@ -33,6 +33,33 @@ Router.get("/getcompany", async (req, res) => {
 })
 
 /* 
+Route     /editcompany/:id
+descrip   editing company details with user id
+params    none
+access    public
+method    put
+*/
+
+Router.put("/editcompany", async (req, res) => {
+  try {
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    let company = await CompanyModel.findById(data.Company.id);
+    if (!company) {
+      return res.status(500).json({ error: 'Organization does not exists' });
+    }
+    await CompanyModel.findByIdAndUpdate(data.Company.id,
+      {
+        $set: req.body.credentials
+      })
+    return res.status(200).json(company);
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+/* 
 Route     /postjob/:companyId
 descrip   posting job application
 params    company id
