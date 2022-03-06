@@ -17,7 +17,7 @@ app.get("/", (req,res)=>{
     res.send("hello world");
 })
 
-//api
+//services/api
 app.use("/auth", auth);
 app.use("/user", user);
 app.use("/resume", resume);

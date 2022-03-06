@@ -180,7 +180,7 @@ Router.put("/acceptapplicant/:internID", async (req, res) => {
       }, {
       new: true
     });
-
+    console.log(user);
     return res.status(200).json({ interns, user });
   } catch (error) {
     return res.status(500).json({ error: error.message });

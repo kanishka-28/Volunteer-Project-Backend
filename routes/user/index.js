@@ -162,6 +162,36 @@ Router.get("/getappliedjobs", async (req, res) => {
 });
 
 /* 
+Route     /deleteappliedjob
+descrip   deleting my job
+params    user id
+access    public
+method    delete
+*/
+
+Router.delete("/deleteappliedjob/:internId", async (req, res) => {
+  try {
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    let user = await UserModel.findById(data.User.id);
+    const interns=user.internsApplied.filter((intern)=>{
+      console.log(intern.id, req.params.internId);
+      return intern.id!==req.params.internId
+    })
+    user = await UserModel.findOneAndUpdate({
+      _id: data.User.id
+    }, {
+      $set: {internsApplied: interns},
+    }, {
+      new: true
+    });   
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(500).send("Some error occured while fetching your interns");
+  }
+});
+
+/* 
 Route     /acceptoffer/:userId
 descrip   getting my offers
 params    user id
@@ -171,24 +201,27 @@ method    get
 
 Router.put("/acceptoffer", async (req, res) => {
   try {
+    console.log(1);
     const token = req.header('token');
     const data = jwt.verify(token, "sudhir$%%Agrawal");
-    let user = await UserModel.findById(data.User.id)
+    let user = await UserModel.findById(data.User.id);
+
     let applied = user.internsApplied.filter((intern)=>{
-      return intern._id.toString()!==req.body.credentials;
-    })
+      return intern.id!==req.body.credentials;
+    });
     const offers = user.offers.filter((offer)=>{
       return offer!==req.body.credentials
-    })
+    });
     user = await UserModel.findOneAndUpdate({
       _id: data.User.id
     }, {
-      $push: {currentProjects: [req.body.credentials]} ,
+      // $push: {currentProjects: [req.body.credentials]} ,
       $set: {offers: offers},
-      $set: {internsApplied: applied},
+      // $set: {internsApplied: applied},
     }, {
       new: true
     });   
+    console.log(user);
     return res.status(200).json(user)
   } catch (error) {
     return res.status(500).send(error.message || "Some error occured while fetching your offers");
