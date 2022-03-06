@@ -128,6 +128,20 @@ Router.put("/rejectapplicant/:internID", async (req, res) => {
       }, {
       new: true
     });
+    let user = await UserModel.findById(req.body.credentials)
+    const internApplied = user.internsApplied.filter((data) => {
+      return data.id !== req.body.credentials
+    })
+    user = await UserModel.findByIdAndUpdate(
+      req.body.credentials,
+      {
+        $set: {
+          internsApplied: internApplied
+        }
+      }, {
+      new: true
+    });
+    console.log(user);
     return res.status(200).json(interns);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -180,7 +194,6 @@ Router.put("/acceptapplicant/:internID", async (req, res) => {
       }, {
       new: true
     });
-    console.log(user);
     return res.status(200).json({ interns, user });
   } catch (error) {
     return res.status(500).json({ error: error.message });

@@ -171,6 +171,10 @@ Router.post("/googlesignin", async (req, res) => {
     const { name, email, password, status } = req.body.credentials
 
     const user = await UserModel.findOne({ email });
+    
+    //generating salt
+    const salt = await bcrypt.genSalt(10);
+    const secPass = await bcrypt.hash(password, salt);
 
     if (!user) {
       //creating new user 
@@ -186,10 +190,6 @@ Router.post("/googlesignin", async (req, res) => {
           id: user.id
         }
       }
-
-      //generating salt
-      const salt = await bcrypt.genSalt(10);
-      const secPass = await bcrypt.hash(password, salt);
 
       //JWT AUth Token
       const token = JWT.sign(data, JWT_SECRET, { expiresIn: "2d" });
