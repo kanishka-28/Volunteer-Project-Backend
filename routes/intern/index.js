@@ -234,28 +234,67 @@ Router.get("/useronboarded/:id", async (req, res) => {
   }
 })
 
+/*
+Route     /bycategory/:category
+descrip   searching intern by category
+params    none
+access    public
+method    post
+*/
 
+Router.get("/bycategory/:category", async (req, res) => {
+  try {
 
-// /*
-// Route     /postintern
-// descrip   posting intern with company id
-// params    none
-// access    public
-// method    post
-// */
+    const interns = await InternModel.find({category: req.params.category});
+    return res.status(200).json(interns);
 
-// Router.post("/postintern", async (req, res) => {
-//   try {
-    
-//     const token = req.header('token');
-//     const data = jwt.verify(token, "sudhir$%%Agrawal");
-//     const newIntern = await InternModel.create({companyId: data.Company.id,...req.body.credentials});
-//     return res.status(200).json({ newIntern });
-    
-//   } catch (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
-// })
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+/*
+Route     /byindustry/:industry
+descrip   searching intern by category
+params    none
+access    public
+method    post
+*/
+
+Router.get("/byindustry/:industry", async (req, res) => {
+  try {
+
+    const interns = await InternModel.find({industry: req.params.industry});
+    return res.status(200).json(interns);
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+/*
+Route     /search/:keyword
+descrip   searching intern by keywords
+params    none
+access    public
+method    post
+*/
+
+Router.get("/search/:keyword", async (req, res) => {
+  try {
+
+    const interns = await InternModel.find({});
+    const result = interns.filter((intern)=>{
+      return intern.title.includes(req.params.keyword) || intern.description.includes(req.params.keyword)
+    })
+    console.log(result);
+    return res.status(200).json(result);
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
 
 
 module.exports = Router;

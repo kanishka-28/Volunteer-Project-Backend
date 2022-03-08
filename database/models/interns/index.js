@@ -21,7 +21,11 @@ const InternSchema = new mongoose.Schema({
     {
         type: String,
     },
-    type:   //volunteer/intern or full time
+    industry:   //volunteer or intern
+    {
+        type: String,
+    },
+    type:   //full time or part time
     {
         type: String,
     },
