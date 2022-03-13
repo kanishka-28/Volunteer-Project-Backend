@@ -30,6 +30,9 @@ const UserSchema = new mongoose.Schema({
     { 
         type: String
     },
+    profile:{
+        type: String
+    },
     address_line_1: 
     { 
         type: String
