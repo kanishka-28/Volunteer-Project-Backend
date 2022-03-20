@@ -7,7 +7,7 @@ const InternModel = require('../../database/models/interns');
 const UserModel = require('../../database/models/user');
 const Router = express.Router();
 const jwt = require("jsonwebtoken")
-
+var nodemailer = require('nodemailer');
 /* 
 Route     /getcompany/:id
 descrip   getting company details with user id
@@ -68,10 +68,10 @@ method    post
 */
 
 Router.post("/postjob", async (req, res) => {
-  try { 
+  try {
     const token = req.header('token');
     const data = jwt.verify(token, "sudhir$%%Agrawal");
-    const intern = await InternModel.create({companyId: data.Company.id, ...req.body.credentials})
+    const intern = await InternModel.create({ companyId: data.Company.id, ...req.body.credentials })
     return res.status(200).json({ intern });
 
   } catch (error) {
@@ -88,7 +88,7 @@ method    post
 */
 
 Router.put("/editjob/:internId", async (req, res) => {
-  try { 
+  try {
     const intern = await InternModel.findByIdAndUpdate(req.params.internId,
       {
         $set: req.body.credentials
@@ -109,15 +109,56 @@ method    get
 */
 
 Router.get("/getinterns", async (req, res) => {
-  try { 
+  try {
     const token = req.header('token');
     const data = jwt.verify(token, "sudhir$%%Agrawal");
-    const intern = await InternModel.find({companyId: data.Company.id})
-    if(!intern){
+    const intern = await InternModel.find({ companyId: data.Company.id })
+    if (!intern) {
       return res.status(500).json({ error: 'org has not posted any opportunity' });
     }
     return res.status(200).json({ intern });
 
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+/* 
+Route     /sendmail/:email
+descrip   posting job application
+params    company id
+access    public
+method    get
+*/
+
+Router.get("/sendmail/:email", async (req, res) => {
+  try {
+    var nodemailer = require('nodemailer');
+
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'thevolint@gmail.com',
+        pass: 'Varanasi@123'
+      }
+    });
+
+    var mailOptions = {
+      from: 'thevolint@gmail.com',
+      to: 'kanishkagour28@gmail.com',
+      subject: 'Sending Email using Node.js',
+      text: 'That was easy!'
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ error: error });
+      } else {
+        console.log('Email sent: ' + info.response);
+        return res.status(200).json({ message: info.response });
+      }
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

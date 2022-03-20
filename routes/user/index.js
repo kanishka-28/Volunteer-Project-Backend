@@ -113,7 +113,7 @@ Router.post("/jobapply/:internId", async (req, res) => {
     intern = await InternModel.findOneAndUpdate({
       _id: req.params.internId
     }, {
-      $push: {usersApplied: [data.User.id]}
+      $push: {usersApplied: data.User.id}
     }, {
       new: true
     });
