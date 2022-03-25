@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 
 /* 
 Route     /allusers
-descrip   getting user details with user id
+descrip   getting all users
 params    none
 access    public
 method    get
@@ -129,6 +129,10 @@ Router.post("/jobapply/:internId", async (req, res) => {
     }, {
       new: true
     });
+    console.log('====================================');
+    console.log(user);
+    console.log('====================================');
+    console.log(intern);
     return res.status(200).send("You have successfully applied for the opportunity");
 
   } catch (error) {

@@ -75,6 +75,9 @@ const InternSchema = new mongoose.Schema({
     usersAccepted: {
         type: Array,
     },
+    usersRejected: {
+        type: Array,
+    },
     userOnBoarded: {
         type: Array,
     },
