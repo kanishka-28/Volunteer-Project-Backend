@@ -91,6 +91,9 @@ const UserSchema = new mongoose.Schema({
     offers: {
         type: Array     
     },
+    rejectedIn : {
+        type: Array
+    }
     },
     {
         timestamps: true

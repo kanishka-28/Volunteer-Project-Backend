@@ -52,6 +52,20 @@ Router.get("/getuser", async (req, res) => {
   }
 })
 
+Router.get("/getuserbyid/:id", async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id);
+    if (!user) {
+      return res.status(500).json({ error: 'User does not exists' });
+    }
+
+    return res.status(200).json( user );
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
 /* 
 Route     /edituser
 descrip   editing user details with user id
@@ -129,10 +143,6 @@ Router.post("/jobapply/:internId", async (req, res) => {
     }, {
       new: true
     });
-    console.log('====================================');
-    console.log(user);
-    console.log('====================================');
-    console.log(intern);
     return res.status(200).send("You have successfully applied for the opportunity");
 
   } catch (error) {
@@ -161,7 +171,7 @@ Router.get("/getappliedjobs", async (req, res) => {
       return res.status(200).json({response,user});
     })    
   } catch (error) {
-    return res.status(500).send("Some error occured while fetching your interns");
+    return res.status(500).send(error);
   }
 });
 
@@ -283,6 +293,31 @@ Router.get("/getoffers", async (req, res) => {
 
     Promise.all(offers.map(async (offer) => {
       const res = await InternModel.findById(offer);
+      return res;
+    })).then((response) => {
+      return res.status(200).json(response);
+    })    
+  } catch (error) {
+    return res.status(500).send(error.message || "Some error occured while fetching your offers");
+  }
+});
+/* 
+Route     /getrejectedin/:userId
+descrip   getting my rejections
+params    user id
+access    public
+method    get
+*/
+
+Router.get("/getrejectedin", async (req, res) => {
+  try {
+    const token = req.header('token');
+    const data = jwt.verify(token, "sudhir$%%Agrawal");
+    const user = await UserModel.findById(data.User.id);
+    const rejectedIn=user.rejectedIn
+
+    Promise.all(rejectedIn.map(async (rej) => {
+      const res = await InternModel.findById(rej);
       return res;
     })).then((response) => {
       return res.status(200).json(response);

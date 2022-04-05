@@ -158,15 +158,14 @@ method    post
 Router.put("/rejectapplicant/:internID", async (req, res) => {
   try {
     let interns = await InternModel.findById(req.params.internID);
-    const newArray = interns.usersApplied.filter((user, i) => {
-      return user !== req.body.credentials
-    });
+    interns.usersRejected.map((user)=>{
+      if(user===req.body.credentials){
+        return res.status(401).json({error: 'You have already rejected the candidate'});
+      }
+    })
     interns = await InternModel.findByIdAndUpdate(
       req.params.internID,
       {
-        $set: {
-          usersApplied: newArray
-        },
         $push:{
           usersRejected: req.body.credentials
         }
@@ -174,14 +173,14 @@ Router.put("/rejectapplicant/:internID", async (req, res) => {
       new: true
     });
     let user = await UserModel.findById(req.body.credentials);
-    const internApplied = user?.internsApplied?.filter((data) => {
-      return data.id !== req.params.internID
-    })
+    // const internApplied = user?.internsApplied?.filter((data) => {
+    //   return data.id !== req.params.internID
+    // })
     user = await UserModel.findByIdAndUpdate(
       req.body.credentials,
       {
-        $set: {
-          internsApplied: internApplied
+        $push:{
+          rejectedIn:req.params.internID
         }
       }, {
       new: true
@@ -203,11 +202,13 @@ method    post
 Router.put("/acceptapplicant/:internID", async (req, res) => {
   try {
     let interns = await InternModel.findById(req.params.internID);
+    interns.usersAccepted.map((user)=>{
+      if(user===req.body.credentials){
+        return res.status(401).json({error: 'You have already accepted the candidate'});
+      }
+    })
     const userAccepted = interns.usersApplied?.filter((user, i) => {
       return user === req.body.credentials
-    });
-    const userApplied = interns.usersApplied?.filter((user, i) => {
-      return user !== req.body.credentials
     });
     interns = await InternModel.findByIdAndUpdate(
       req.params.internID,
@@ -215,25 +216,16 @@ Router.put("/acceptapplicant/:internID", async (req, res) => {
         $push: {
           usersAccepted: userAccepted
         },
-        $set: {
-          usersApplied: userApplied
-        }
       }, {
       new: true
     });
     let user = await UserModel.findById(req.body.credentials)
-    const internApplied = user.internsApplied.filter((data) => {
-      return data.id !== req.params.internID
-    })
     user = await UserModel.findByIdAndUpdate(
       req.body.credentials,
       {
         $push: {
           offers: req.params.internID
         },
-        $set: {
-          internsApplied: internApplied
-        }
       }, {
       new: true
     });
