@@ -89,8 +89,11 @@ const UserSchema = new mongoose.Schema({
         type: Array
     },
     offers: {
-        type: Array
+        type: Array     
     },
+    rejectedIn : {
+        type: Array
+    }
     },
     {
         timestamps: true
