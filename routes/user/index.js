@@ -54,6 +54,7 @@ Router.get("/getuser", async (req, res) => {
 
 Router.get("/getuserbyid/:id", async (req, res) => {
   try {
+    console.log(req.params.id);
     const user = await UserModel.findById(req.params.id);
     if (!user) {
       return res.status(500).json({ error: 'User does not exists' });
