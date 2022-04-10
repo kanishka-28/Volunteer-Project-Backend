@@ -85,15 +85,36 @@ const UserSchema = new mongoose.Schema({
             },
         }
     ],
-    currentProjects: {
-        type: Array
+    currentProjects:{
+        type: Array     
     },
     offers: {
         type: Array     
     },
     rejectedIn : {
         type: Array
-    }
+    },
+    hoursPerDay:[
+        {
+            projectId:{
+                type:String,
+                required: true,
+            },
+            date:{
+                type:String,
+                required: true,
+            },
+            value:{
+                type:Number,
+                default: 0,
+                required: true,
+            },
+            approved:{
+                type:Number,
+                default: 0,
+            }
+        }
+    ]
     },
     {
         timestamps: true
