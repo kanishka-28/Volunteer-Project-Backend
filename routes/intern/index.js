@@ -285,11 +285,12 @@ method    post
 Router.get("/search/:keyword", async (req, res) => {
   try {
 
+    console.log(req.params.keyword);
     const interns = await InternModel.find({});
     const result = interns.filter((intern)=>{
       return intern.title.includes(req.params.keyword) || intern.description.includes(req.params.keyword)
     })
-    console.log(result);
+    // console.log(result);
     return res.status(200).json(result);
 
   } catch (error) {
