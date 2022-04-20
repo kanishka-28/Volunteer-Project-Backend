@@ -6,9 +6,19 @@ const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
 const CompanyModel = require("../database/models/company");
 const Router = express.Router();
+const passwordValidator = require('password-validator');
 
 
 const JWT_SECRET = 'sudhir$%%Agrawal'
+
+var pcheck = new passwordValidator();
+pcheck
+.is().min(8)                                    // Minimum length 8
+.is().max(100)                                  // Maximum length 100
+.has().uppercase()                              // Must have uppercase letters
+.has().lowercase()                              // Must have lowercase letters
+.has().digits(1)                                // Must have at least 2 digits
+.has().not().spaces();            
 
 /* 
 Route     /signup
@@ -40,6 +50,9 @@ Router.post("/signup", [
         ifAlreadyExists = await CompanyModel.findOne({ email: email });
       }
 
+      if(pcheck.validate(password)==false){
+        return res.status(400).json({ error: `Password has to follow the criteria of minimum 8 characters, an uppercase, a lowercase and a digit` });
+      }
       if (ifAlreadyExists) {
         return res.status(500).json({ error: `${status} with this email already exists` });
       }
